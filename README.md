@@ -2,7 +2,8 @@ AskTerminal - Arduino Library for User Input Handling
 
 //Overview
 
-AskTerminal is a lightweight Arduino library that simplifies user input handling through serial (or other terminal) communication. It provides functions for prompting users to enter various data types, including integers, floating-point numbers, characters, and strings, with validation and optional constraints.
+AskTerminal is a lightweight Arduino library that simplifies user input handling through serial (or other terminal) communication. 
+It provides functions for prompting users to enter various data types, including integers, floating-point numbers, characters, and strings, with validation and optional constraints.
 
 //Features
 
@@ -57,19 +58,28 @@ void loop() {
 
 1. Asking for an Integer
 
-int askTerminalForInt(Stream &terminal, const String &prompt, int minValue, int maxValue, int exitValue, const String &exitKeyword);\n
-terminal – The stream to use (Serial or another Stream object).\n
-prompt – The message to display.\n
-minValue / maxValue – The valid input range.\n
-exitValue – The value to return if the exit keyword is entered.\n
-exitKeyword – A string that allows the user to exit.\n
+int askTerminalForInt(Stream &terminal, const String &prompt, int minValue, int maxValue, int exitValue, const String &exitKeyword);
+
+terminal – The stream to use (Serial or another Stream object).
+
+prompt – The message to display.
+
+minValue / maxValue – The valid input range.
+
+exitValue – The value to return if the exit keyword is entered.
+
+exitKeyword – A string that allows the user to exit.
 
 2. Asking for a String with Constraints
 
 String askTerminalForString(Stream &terminal, const String &prompt, size_t minLength, size_t maxLength, const String &requiredChars, const String &restrictedChars, const String &exitKeyword);
+
 minLength / maxLength – Limits on input length.
+
 requiredChars – String must contain at least one of these characters.
+
 restrictedChars – String must NOT contain any of these characters.
+
 (Include more function descriptions as needed.)
 
 License
