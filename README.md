@@ -57,12 +57,12 @@ void loop() {
 
 1. Asking for an Integer
 
-int askTerminalForInt(Stream &terminal, const String &prompt, int minValue, int maxValue, int exitValue, const String &exitKeyword);
-terminal – The stream to use (Serial or another Stream object).
-prompt – The message to display.
-minValue / maxValue – The valid input range.
-exitValue – The value to return if the exit keyword is entered.
-exitKeyword – A string that allows the user to exit.
+int askTerminalForInt(Stream &terminal, const String &prompt, int minValue, int maxValue, int exitValue, const String &exitKeyword);\n
+terminal – The stream to use (Serial or another Stream object).\n
+prompt – The message to display.\n
+minValue / maxValue – The valid input range.\n
+exitValue – The value to return if the exit keyword is entered.\n
+exitKeyword – A string that allows the user to exit.\n
 
 2. Asking for a String with Constraints
 
