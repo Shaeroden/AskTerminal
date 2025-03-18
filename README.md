@@ -1,9 +1,11 @@
 AskTerminal - Arduino Library for User Input Handling
 
 //Overview
+
 AskTerminal is a lightweight Arduino library that simplifies user input handling through serial (or other terminal) communication. It provides functions for prompting users to enter various data types, including integers, floating-point numbers, characters, and strings, with validation and optional constraints.
 
 //Features
+
 Supports multiple data types: byte, int, long, float, double, char, string, and more.
 Allows input validation (min/max values, required/restricted characters).
 Supports exit keywords for terminating input.
@@ -12,6 +14,7 @@ Reprompts users if they enter invalid or out of range data.
 Works with all terminal types.  USB, bluetooth, WiFi, etc.
 
 //Installation
+
 Using the Arduino Library Manager
 Open the Arduino IDE.
 Go to Sketch → Include Library → Manage Libraries...
@@ -19,12 +22,14 @@ Search for AskTerminal.
 Click Install.
 
 //Manual Installation
+
 Download the AskTerminal.zip file from the GitHub Releases.
 Open the Arduino IDE.
 Go to Sketch → Include Library → Add .ZIP Library...
 Select the downloaded ZIP file.
 
 //Usage
+
 Basic Example
 
 #include <AskTerminal.h>
@@ -49,6 +54,7 @@ void loop() {
 }
 
 //Function Reference
+
 1. Asking for an Integer
 
 int askTerminalForInt(Stream &terminal, const String &prompt, int minValue, int maxValue, int exitValue, const String &exitKeyword);
