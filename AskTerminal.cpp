@@ -30,9 +30,14 @@ bool askTerminalForBool(Stream &terminal, const String &prompt, bool exitValue, 
 		//re-print the main prompt every 5 attempts.
 		reprompt = (reprompt + 1) % 5;
         
-        userInput = terminal.readStringUntil('\n');
-        userInput.trim();
-        userInput.toLowerCase();
+        clearSerialBuffer(terminal);
+		userInput = "";
+
+        // Wait for user input and proceed when there is nonblank input
+        while (userInput == "") {
+            userInput = terminal.readStringUntil('\n');
+            userInput.trim();
+        }
 
         // Check if the input matches the exit keyword
         if (userInput.equals(exitKeyword)) {
@@ -69,6 +74,15 @@ byte askTerminalForByte(Stream &terminal, const String &prompt, byte minValue, b
 		//re-print the main prompt every 5 attempts.
 		reprompt = (reprompt + 1) % 5;
         
+		clearSerialBuffer(terminal);
+		userInput = "";
+
+        // Wait for user input and proceed when there is nonblank input
+        while (userInput == "") {
+            userInput = terminal.readStringUntil('\n');
+            userInput.trim();
+        }
+		
         // Read user input
         userInput = terminal.readStringUntil('\n');
         userInput.trim();  // Remove any leading/trailing spaces
@@ -108,29 +122,31 @@ int askTerminalForInt(Stream &terminal, const String &prompt, int minValue, int 
     
     while (true) {
         if (reprompt == 0){
-			terminal.print(prompt);
-			terminal.println("");
-		}
-		//re-print the main prompt every 5 attempts.
-		reprompt = (reprompt + 1) % 5;
-        
-        // Read user input
-        userInput = terminal.readStringUntil('\n');
-        userInput.trim();  // Remove any leading/trailing spaces
-        
-        // Check if the input matches the exit keyword
-        if (userInput.equals(exitKeyword)) {
-            return exitValue;
+            terminal.print(prompt);
+            terminal.println("");
         }
-        
-        // Try to convert the input to an integer
-        int userValue = userInput.toInt();
-        
-        if (userValue >= minValue && userValue <= maxValue) {
-            input = userValue;
-            return input;  // Return the valid integer input
+        reprompt = (reprompt + 1) % 5;
+
+        clearSerialBuffer(terminal);
+        userInput = "";
+
+        while (userInput == "") {
+            userInput = terminal.readStringUntil('\n');
+            userInput.trim();
+        }
+
+        if (userInput.equals(exitKeyword)) return exitValue;
+
+        // Manual parsing to allow negatives
+        char inputBuffer[userInput.length() + 1];
+        userInput.toCharArray(inputBuffer, sizeof(inputBuffer));
+        char *endptr;
+        long userValue = strtol(inputBuffer, &endptr, 10);
+
+        if (*endptr == '\0' && userValue >= minValue && userValue <= maxValue) {
+            input = (int)userValue;
+            return input;
         } else {
-            // If invalid, print the valid range and prompt again
             terminal.print("Invalid input. Please enter a number between ");
             terminal.print(minValue);
             terminal.print(" and ");
@@ -142,44 +158,55 @@ int askTerminalForInt(Stream &terminal, const String &prompt, int minValue, int 
     }
 }
 
+
+bool isUnsignedInt(const String& str) {
+	for (size_t i = 0; i < str.length(); i++) {
+		if (!isDigit(str.charAt(i))) return false;
+	}
+	return str.length() > 0;
+}
+
 unsigned int askTerminalForUInt(Stream &terminal, const String &prompt, unsigned int minValue, unsigned int maxValue, unsigned int exitValue, const String &exitKeyword) {
-    unsigned int input;
-    String userInput;
+	String userInput;
     byte reprompt = 0;
-    
+
     while (true) {
-        if (reprompt == 0){
-			terminal.print(prompt);
-			terminal.println("");
-		}
-		//re-print the main prompt every 5 attempts.
-		reprompt = (reprompt + 1) % 5;
-        
-        // Read user input
-        userInput = terminal.readStringUntil('\n');
-        userInput.trim();  // Remove any leading/trailing spaces
-        
-        // Check if the input matches the exit keyword
+        if (reprompt == 0) {
+            terminal.print(prompt);
+            terminal.println();
+        }
+        reprompt = (reprompt + 1) % 5;
+
+        clearSerialBuffer(terminal); // clear any junk before reading
+        userInput = "";
+
+        // Wait for user input
+        while (userInput.length() == 0) {
+            userInput = terminal.readStringUntil('\n');
+            userInput.trim();
+        }
+
+        // Check for exit keyword
         if (userInput.equals(exitKeyword)) {
             return exitValue;
         }
-        
-        // Try to convert the input to an unsigned integer
-        unsigned int userValue = userInput.toInt();
-        
-        if (userValue >= 0 && userValue >= minValue && userValue <= maxValue) {
-            input = (unsigned int)userValue;
-            return input;  // Return the valid unsigned integer input
-        } else {
-            // If invalid, print the valid range and prompt again
-            terminal.print("Invalid input. Please enter a positive number between ");
-            terminal.print(minValue);
-            terminal.print(" and ");
-            terminal.print(maxValue);
-            terminal.print(", or type ");
-            terminal.print(exitKeyword);
-            terminal.println(" to exit.");
+
+        // Validate the input string
+        if (isUnsignedInt(userInput)) {
+            unsigned long userValue = userInput.toInt(); // long to avoid overflow before cast
+            if (userValue >= minValue && userValue <= maxValue) {
+                return (unsigned int)userValue;
+            }
         }
+
+        // If invalid, print an error and prompt again
+        terminal.print("Invalid input. Please enter a positive number between ");
+        terminal.print(minValue);
+        terminal.print(" and ");
+        terminal.print(maxValue);
+        terminal.print(", or type ");
+        terminal.print(exitKeyword);
+        terminal.println(" to exit.");
     }
 }
 
@@ -553,10 +580,14 @@ char askTerminalForChar(Stream &terminal, const String &prompt, const String &va
             return input.charAt(0);  // Return the valid character
         } else {
             // If invalid, print the valid characters and prompt again
-            terminal.print("Invalid input. Please enter a valid character");
+            terminal.println("Invalid input. Please enter one of these characters:");
             if (validChars.length() > 0) {
-                terminal.print(" from: ");
-                terminal.println(validChars);
+                //terminal.print(" from: ");
+                for (size_t i = 0; i < validChars.length(); ++i) {
+                    terminal.print(validChars.charAt(i));
+                    terminal.print(" ");
+                }
+                terminal.println();
             } else {
                 terminal.println(".");
             }
@@ -564,6 +595,7 @@ char askTerminalForChar(Stream &terminal, const String &prompt, const String &va
             terminal.print(exitKeyword);
             terminal.println(" to exit.");
         }
+		input = "";
     }
 }
 
@@ -641,3 +673,36 @@ String askTerminalForString(Stream &terminal, const String &prompt, size_t minLe
     }
 }
 
+//function specifically for text-based menus.  use commas to separate options.
+// example: terminalMenu(SerialBT, "MAIN MENU", "Run Default,Preset,Calibration,Settings", "rpcs")
+// each option should appear on its own line with its corresponding char letter capitalized in square backets.
+char terminalMenu(Stream &terminal, const String &title, const String &options, const String &charOptions) {
+  terminal.println(title);
+
+  int optionStart = 0;
+  int optionIndex = 0;
+  String upperCharOptions = charOptions;
+  upperCharOptions.toUpperCase();
+
+  while (optionStart < options.length() && optionIndex < upperCharOptions.length()) {
+    int commaIndex = options.indexOf(',', optionStart);
+    String option;
+
+    if (commaIndex == -1) {
+      option = options.substring(optionStart);
+      optionStart = options.length();
+    } else {
+      option = options.substring(optionStart, commaIndex);
+      optionStart = commaIndex + 1;
+    }
+
+    option.trim();
+    terminal.print("[");
+    terminal.print(upperCharOptions[optionIndex]);
+    terminal.print("] ");
+	terminal.println(option);
+    optionIndex++;
+  }
+
+  return askTerminalForChar(terminal, "", charOptions);
+}
