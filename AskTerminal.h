@@ -19,5 +19,5 @@ unsigned short askTerminalForUShort(Stream &terminal, const String &prompt, unsi
 char askTerminalForChar(Stream &terminal, const String &prompt, const String &validChars = "", const String &exitKeyword = "exit", char exitValue = '\0');
 String askTerminalForString(Stream &terminal, const String &prompt, size_t minLength = 1, size_t maxLength = 255, const String &requiredChars = "", const String &restrictedChars = "", const String &exitKeyword = "exit");
 bool askTerminalForBool(Stream &terminal, const String &prompt, bool exitValue = false, const String &exitKeyword = "exit");
-
+char terminalMenu(Stream &terminal, const String &title, const String &options, const String &charOptions);
 #endif
