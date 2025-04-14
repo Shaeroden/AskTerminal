@@ -5,10 +5,11 @@
 #include "AskTerminal.h"
 
 // a set of tools for stopping a program and prompting a user for a response through a terminal.
+// can be used with any terminal object to enable prompt-response communications 
 // a sketch can only be resumed with a valid input from the user or a defineable exit keyword that forces the askTerminal function to return a specific value.  
 // responses can be constrained in a variety of ways within the function call.
 
-// this code was drafted by ChatGPT and edited by the author.
+// this code was drafted by ChatGPT, and then edited and tested by the author.
 
 // this is my first library.  thank you for your patience with any errors.
 
@@ -115,6 +116,7 @@ byte askTerminalForByte(Stream &terminal, const String &prompt, byte minValue, b
     }
 }
 
+// now handles negatives correctly!
 int askTerminalForInt(Stream &terminal, const String &prompt, int minValue, int maxValue, int exitValue, const String &exitKeyword) {
     int input;
     String userInput;
