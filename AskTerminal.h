@@ -16,7 +16,7 @@ double askTerminalForDouble(Stream &terminal, const String &prompt, double minVa
 long long askTerminalForLongLong(Stream &terminal, const String &prompt, long long minValue = LLONG_MIN, long long maxValue = LLONG_MAX, long long exitValue = 0, const String &exitKeyword = "exit");
 short askTerminalForShort(Stream &terminal, const String &prompt, short minValue = SHRT_MIN, short maxValue = SHRT_MAX, short exitValue = 0, const String &exitKeyword = "exit");
 unsigned short askTerminalForUShort(Stream &terminal, const String &prompt, unsigned short minValue = 0, unsigned short maxValue = USHRT_MAX, unsigned short exitValue = 0, const String &exitKeyword = "exit");
-char askTerminalForChar(Stream &terminal, const String &prompt, const String &validChars = "", const String &exitKeyword = "exit", char exitValue = '\0');
+char askTerminalForChar(Stream &terminal, const String &prompt, const String &validChars = "", char exitValue = '\0', const String &exitKeyword = "exit");
 String askTerminalForString(Stream &terminal, const String &prompt, size_t minLength = 1, size_t maxLength = 255, const String &requiredChars = "", const String &restrictedChars = "", const String &exitKeyword = "exit");
 bool askTerminalForBool(Stream &terminal, const String &prompt, bool exitValue = false, const String &exitKeyword = "exit");
 char terminalMenu(Stream &terminal, const String &title, const String &options, const String &charOptions);
